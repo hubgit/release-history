@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-input/core-input.html">
+<link rel="import" href="../../bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+
+<polymer-element name="release-history" attributes="repo">
+  <template>
+    <link rel="stylesheet" href="release-history.css">
+
+    <h1>Release History</h1>
+
+    <p>A demonstration of fetching data from GitHub's "List releases for a repository" API.</p>
+
+    <form on-submit="{{ fetch }}">
+      <input is="core-input" id="input" value="{{ repo }}" placeholder="Enter a GitHub repository"></input>
+      <core-icon-button icon="list" on-tap="{{ fetch }}">List releases</core-icon-button>
+    </form>
+
+    <core-ajax id="releases" handleAs="json" response="{{ releases }}"
+      url="https://api.github.com/repos/{{ repo }}/releases"></core-ajax>
+
+    <template if="{{ releases }}">
+      <h2>Releases</h2>
+
+      <template repeat="{{ release, index in releases }}">
+        <div>
+          <a href="{{ release.html_url }}" target="_blank">{{ release.name }}</a>
+          <template if="{{ releases[index + 1 ] }}">
+            <a href="https://github.com/{{ repo }}/compare/{{ releases[index + 1 ].tag_name }}...{{ release.tag_name }}" target="_blank">[diff]</a>
+          </template>
+        <div>
+      </template>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      repo: 'twbs/bootstrap',
+      fetch: function(event) {
+        event.preventDefault();
+        this.$.releases.go();
+      }
+    });
+  </script>
+</polymer-element>
