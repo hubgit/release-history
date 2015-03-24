@@ -10,12 +10,7 @@ var pagespeed = require('psi');
 var reload = browserSync.reload;
 var merge = require('merge-stream');
 var path = require('path');
-var ghPages = require('gulp-gh-pages');
-
-gulp.task('deploy', function() {
-  return gulp.src('./dist/**/*')
-    .pipe(ghPages());
-});
+var ghpages = require('gh-pages');
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -206,7 +201,9 @@ gulp.task('pagespeed', function (cb) {
   }, cb);
 });
 
-
+gulp.task('deploy', ['default'], function(cb) {
+    ghpages.publish(path.join(process.cwd(), 'dist'), cb);
+});
 
 // Load custom tasks from the `tasks` directory
 try { require('require-dir')('tasks'); } catch (err) {}
